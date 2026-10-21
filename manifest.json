@@ -1,0 +1,16 @@
+{
+  "name": "Professional Calculator App",
+  "short_name": "CalculatorPro",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#141419",
+  "theme-color": "#1f1f26",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://flaticon.com",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
