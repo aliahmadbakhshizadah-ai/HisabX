@@ -1,29 +1,33 @@
-const CACHE_NAME = 'hesabx-v1';
+const CACHE_NAME = 'hesabx-v2'; // تغییر نسخه به v2 برای بیدار کردن مرورگر
 const ASSETS = [
   'index.html',
-  'manifest.json',
-  'https://flaticon.com'
+  'manifest.json'
 ];
 
-// دانلود و ذخیره تمام فایل‌ها و عکس آیکون در اولین اجرا
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
-    }).then(() => self.skipWaiting())
+    }).then(() => self.skipWaiting()) // اجرای بدون معطلی نسخه جدید
   );
 });
 
-// فعال‌سازی سریع بدون نیاز به بستن برنامه
 self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cache) => {
+          if (cache !== CACHE_NAME) {
+            return caches.delete(cache); // حذف کامل حافظه قدیمی کدهای قبلی
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
 });
 
-// خواندن اطلاعات مستقیم از حافظه کش در صورت قطع اینترنت
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      return cachedResponse || fetch(event.request);
-    })
+    fetch(event.request).catch(() => caches.match(event.request))
   );
 });
